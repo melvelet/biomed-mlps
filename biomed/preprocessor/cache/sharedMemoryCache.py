@@ -31,8 +31,8 @@ class SharedMemoryCache( Cache ):
 
     class Factory( CacheFactory ):
         @staticmethod
-        def getInstance() -> Cache:
+        def getInstance( MulitprocessingManager: Manager ) -> Cache:
             return SharedMemoryCache(
-                Manager().dict(),
-                Manager().Lock()
+                MulitprocessingManager.dict(),
+                MulitprocessingManager.Lock()
             )

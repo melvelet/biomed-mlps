@@ -1,4 +1,6 @@
 from biomed.pipeline import Pipeline
+from biomed.preprocessor.polymorph_preprocessor import PolymorphPreprocessor
+from biomed.properties_manager import PropertiesManager
 from math import ceil
 from multiprocessing import Process, Manager
 from time import sleep
@@ -6,14 +8,13 @@ from time import sleep
 class PipelineRunner:
     class Factory:
         @staticmethod
-        def getInstance( target_dimension: str ):
-            return PipelineRunner( target_dimension )
+        def getInstance():
+            return PipelineRunner()
 
-    __MemoryManager = Manager()
-
-    def __init__( self, target_dimension: str ):
-        self.__Target = target_dimension
+    def __init__( self ):
         self.__Output = None
+        self.__Preprocessor = None
+        self.__Properties = None
 
     def __getChunkSize(
         self,
@@ -23,7 +24,8 @@ class PipelineRunner:
         return ceil( SizeOfPermutations / TotalProcesses )
 
     def run( self, Permutations: list, Workers = 1 ):
-        self.__Output = PipelineRunner.__MemoryManager.dict()
+        self.__Output = Manager().dict()
+        self.__Properties = PropertiesManager()
 
         if Workers == 1:
             self.__runPipeline( Permutations )
@@ -67,6 +69,10 @@ class PipelineRunner:
         This.__runPipeline( Permutations )
 
     def __runPipeline( self, Permutations: list ):
-        Pipe = Pipeline.Factory.getInstance( self.__Target )
+        Pipe = Pipeline.Factory.getInstance(
+            self.__Properties,
+            PolymorphPreprocessor.Factory.getInstance( self.__Properties )
+        )
+
         for Configuration in Permutations:
             self.__Output[ Configuration[ "id" ] ] = Pipe.pipe( Configuration[ "data" ], Configuration )

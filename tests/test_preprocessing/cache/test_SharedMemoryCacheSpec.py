@@ -6,31 +6,32 @@ if AdditionalPath not in Sys.path:
     Sys.path.append( AdditionalPath )
 
 import unittest
+from unittest.mock import MagicMock
 from biomed.preprocessor.cache.cache import Cache
 from biomed.preprocessor.cache.sharedMemoryCache import SharedMemoryCache
-from multiprocessing import Process, Lock
+from multiprocessing import Process, Manager
 
 class SharedMemoryCacheSpec( unittest.TestCase ):
     def test_it_is_a_Cache( self ):
-        MyCache = SharedMemoryCache.Factory.getInstance()
+        MyCache = SharedMemoryCache.Factory.getInstance( MagicMock() )
         self.assertTrue( isinstance( MyCache, Cache ) )
 
     def test_it_tells_if_contains_a_id( self ):
-        MyCache = SharedMemoryCache( { "a": "bala" }, Lock() )
+        MyCache = SharedMemoryCache( { "a": "bala" }, MagicMock() )
         self.assertTrue( MyCache.has( "a" ) )
         self.assertFalse( MyCache.has( "b" ) )
 
     def test_it_returns_a_stored_value( self ):
         Stored = "My little poney farm."
         Cache = { "a": Stored }
-        MyCache = SharedMemoryCache( Cache, Lock() )
+        MyCache = SharedMemoryCache( Cache, MagicMock() )
         self.assertEqual(
             Stored,
             MyCache.get( "a" )
         )
 
     def test_it_returns_None_if_the_given_key_is_not_in_the_cache( self ):
-        MyCache = SharedMemoryCache( dict(), Lock() )
+        MyCache = SharedMemoryCache( dict(), MagicMock() )
         self.assertEqual(
             None,
             MyCache.get( "a" )
@@ -39,7 +40,7 @@ class SharedMemoryCacheSpec( unittest.TestCase ):
     def test_it_stores_data( self ):
         Cache = dict()
         Expected = "blabla"
-        MyCache = SharedMemoryCache( Cache, Lock() )
+        MyCache = SharedMemoryCache( Cache, MagicMock() )
         MyCache.set( "a", Expected )
         self.assertTrue( "a" in Cache )
         self.assertEqual(
@@ -50,7 +51,7 @@ class SharedMemoryCacheSpec( unittest.TestCase ):
     def test_it_overwrites_data( self ):
         Cache = { "a": "poney" }
         Expected = "blabla"
-        MyCache = SharedMemoryCache( Cache, Lock() )
+        MyCache = SharedMemoryCache( Cache, MagicMock() )
         MyCache.set( "a", Expected )
         self.assertTrue( "a" in Cache )
         self.assertEqual(
@@ -63,7 +64,8 @@ class SharedMemoryCacheSpec( unittest.TestCase ):
             for Key in ToFill:
                 Cache.set( Key, ToFill[ Key ] )
 
-        MyCache = SharedMemoryCache.Factory.getInstance()
+        MyManager = Manager()
+        MyCache = SharedMemoryCache.Factory.getInstance( MyManager )
         P1Value = { "a": "b", "b": "c", "c": "d" }
         P2Value = { "z": "w", "x": "y", "u": "v" }
 
@@ -92,7 +94,7 @@ class SharedMemoryCacheSpec( unittest.TestCase ):
     def test_it_returns_its_current_size( self ):
         Cache = { "a": "poney" }
         Expected = 1
-        MyCache = SharedMemoryCache( Cache, Lock() )
+        MyCache = SharedMemoryCache( Cache, MagicMock() )
         self.assertEqual(
             Expected,
             MyCache.size()
@@ -100,7 +102,7 @@ class SharedMemoryCacheSpec( unittest.TestCase ):
 
     def test_it_returns_its_value_as_dict( self ):
         Cache = { "a": "poney" }
-        MyCache = SharedMemoryCache( Cache, Lock() )
+        MyCache = SharedMemoryCache( Cache, MagicMock() )
         Values = MyCache.toDict()
         self.assertTrue( isinstance( Values, dict ) )
         self.assertDictEqual(

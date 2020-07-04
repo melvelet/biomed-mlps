@@ -66,12 +66,12 @@ class NumpyArrayFileCache( Cache ):
                 return Path
 
         @staticmethod
-        def getInstance( PathToCacheDir: str ) -> Cache:
+        def getInstance( PathToCacheDir: str, MulitprocessingManager: Manager ) -> Cache:
             NumpyArrayFileCache.Factory.__checkDir(
                 NumpyArrayFileCache.Factory.__toAbsPath( PathToCacheDir )
             )
 
             return NumpyArrayFileCache(
                 PathToCacheDir,
-                Manager().Lock()
+                MulitprocessingManager.Lock()
             )

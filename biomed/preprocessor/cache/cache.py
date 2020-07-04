@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from multiprocessing import Manager
 
 class abstractstatic(staticmethod):
     __slots__ = ()
@@ -29,10 +30,10 @@ class Cache(ABC):
 
 class CacheFactory( ABC ):
     @abstractstatic
-    def getInstance() -> Cache:
+    def getInstance( MulitprocessingManager: Manager ) -> Cache:
         pass
 
 class FileCacheFactory( ABC ):
     @abstractstatic
-    def getInstance( PathToCacheDir: str ) -> Cache:
+    def getInstance( PathToCacheDir: str, MulitprocessingManager: Manager ) -> Cache:
         pass

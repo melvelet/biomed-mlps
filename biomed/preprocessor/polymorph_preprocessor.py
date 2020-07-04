@@ -271,26 +271,27 @@ class PolymorphPreprocessor( PreProcessor ):
 
         @staticmethod
         def getInstance( Properties: PropertiesManager ) -> PreProcessor:
+            MemManager = Manager()
             FileCache = NumpyArrayFileCache.Factory.getInstance(
-                Properties.cache_dir
+                Properties.cache_dir,
+                MemManager
             )
 
             return PolymorphPreprocessor(
                 PolymorphPreprocessor.Factory.__FacilityManager,
                 Properties.workers,
                 FileCache,
-                PolymorphPreprocessor.Factory.__loadSharedMemory( FileCache ),
+                PolymorphPreprocessor.Factory.__loadSharedMemory( MemManager, FileCache ),
                 PolymorphPreprocessor.Factory.__Simple,
                 PolymorphPreprocessor.Factory.__SimpleFlags,
                 PolymorphPreprocessor.Factory.__Complex,
                 PolymorphPreprocessor.Factory.__ComplexFlags,
-                Manager().Lock(),
+                MemManager.Lock(),
             )
 
         @staticmethod
-        def __loadSharedMemory( FileCache: Cache ) -> Cache:
-            SharedMemory = SharedMemoryCache.Factory.getInstance()
-
+        def __loadSharedMemory( MemManager: Manager, FileCache: Cache ) -> Cache:
+            SharedMemory = SharedMemoryCache.Factory.getInstance( MemManager )
             if FileCache.has( "hardId42" ):
                 PolymorphPreprocessor.Factory.__loadIntoSharedMemory( FileCache, SharedMemory )
 

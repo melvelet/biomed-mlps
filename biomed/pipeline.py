@@ -1,29 +1,30 @@
 from pandas import DataFrame
 from biomed.properties_manager import PropertiesManager
-from biomed.preprocessor.polymorph_preprocessor import PolymorphPreprocessor
+from biomed.preprocessor.pre_processor import PreProcessor
 from biomed.text_mining_manager import TextMiningManager
 
 class Pipeline:
     class Factory:
         @staticmethod
-        def getInstance( target_dimension: str ):
+        def getInstance( Properties: PropertiesManager, Preprocessor: PreProcessor ):
             return Pipeline(
-                PropertiesManager(),
-                target_dimension
+                Properties,
+                Preprocessor
             )
 
     def __init__(
         self,
         Properties: PropertiesManager,
-        Target: str
+        Preprocessor: PreProcessor
     ):
         self.__Properties = Properties
-        self.__Target = Target
+        self.__Preprocessor = Preprocessor
+        self.__Target = Properties.classifier
 
     def __startTextminer( self ):
         self.__TextMining = TextMiningManager(
             self.__Properties,
-            PolymorphPreprocessor.Factory.getInstance( self.__Properties )
+            self.__Preprocessor
         )
 
     def pipe( self, training_data: DataFrame, properties: dict = None ):

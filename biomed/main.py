@@ -19,7 +19,7 @@ if __name__ == '__main__':
     fh = FileHandler()
     training_data = fh.read_tsv_pandas_data_structure(training_data_location)
 
-    Runner = PipelineRunner.Factory.getInstance( "is_cancer" )
+    Runner = PipelineRunner.Factory.getInstance()
     preds = Runner.run( [ { "id": "1", "data": training_data } ] )
 
     for key in preds:
