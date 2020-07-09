@@ -1,18 +1,18 @@
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense
 from biomed.properties_manager import PropertiesManager
 from keras.regularizers import l1
 from biomed.mlp.mlp import MLP
 from biomed.mlp.mlp import MLPFactory
 
-class SimpleCExtendedFFN( MLP ):
+class SimpleDExtendedFFN( MLP ):
     class Factory( MLPFactory ):
         @staticmethod
         def getInstance( Properties: PropertiesManager ):
-            return SimpleCExtendedFFN( Properties )
+            return SimpleDExtendedFFN( Properties )
 
     def __init__( self, Properties: PropertiesManager ):
-        super( SimpleCExtendedFFN, self ).__init__( Properties )
+        super( SimpleDExtendedFFN, self ).__init__( Properties )
 
 
     def build_mlp_model(self, input_dim, nb_classes):
@@ -25,8 +25,8 @@ class SimpleCExtendedFFN( MLP ):
                 input_dim = input_dim,
             )
         )
-        Model.add( Dropout( 0.25 ) )
         #hidden layer
+        Model.add( Dropout( 0.25 ) )
         Model.add(
             Dense(
                 units = 5,
@@ -36,13 +36,13 @@ class SimpleCExtendedFFN( MLP ):
 
             )
         )
-        Model.add( Dropout( 0.1 ) )
         #output layer
+        Model.add( Dropout( 0.1 ) )
         Model.add( Dense( units = nb_classes, activation ='sigmoid' ) )
 
         Model.compile(
             loss="binary_crossentropy",
-            optimizer='adam',
+            optimizer='nadam',
             metrics=['accuracy']
         )
 
