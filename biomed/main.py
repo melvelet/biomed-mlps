@@ -12,6 +12,7 @@ from biomed.properties_manager import PropertiesManager
 from biomed.file_handler import FileHandler
 from biomed.pipeline_runner import PipelineRunner
 from biomed.plotter import Plotter
+from biomed.evaluator import Evaluator
 
 def printResults( Predictions ):
     def outputResults( prediction: list ):
@@ -69,8 +70,8 @@ if __name__ == '__main__':
     training_data = fh.read_tsv_pandas_data_structure( training_data_location )
     TestData = fh.read_tsv_pandas_data_structure( TestData )
 
-    plotter = Plotter()
-    plotter.plot_target_distribution(training_data)
+    # plotter = Plotter()
+    # plotter.plot_target_distribution(training_data)
     # exit(0)
 
     Runner = PipelineRunner.Factory.getInstance()
@@ -80,3 +81,5 @@ if __name__ == '__main__':
         "test": TestData,
     } ] )
     printResults( Results )
+    evaluator = Evaluator()
+    evaluator.generate_stats_and_write_to_file(Results['1'][1])
