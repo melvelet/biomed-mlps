@@ -58,7 +58,7 @@ class Evaluator:
               '\n correctly predicted:', tp)
 
         with open('../results/all_results.txt', 'a') as file:
-            file.write(f"classifier={pm.classifier}, model={pm.model}, preprocessing={pm.preprocessing['variant']},"
+            file.write(f"classifier={pm.classifier}, model={pm.model}, preprocessing={pm.preprocessing['variant']}, "
                        f"ngrams={pm.tfidf_transformation_properties['ngram_range'][1]}\n"
                        f"{score}\nf1_score_macro_accurate={f1_score_macro_accurate}\ntrue positives={tp}\n\n")
 
